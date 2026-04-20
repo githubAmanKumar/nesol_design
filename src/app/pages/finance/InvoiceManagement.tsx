@@ -1,0 +1,13 @@
+export default function InvoiceManagement() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="font-bold text-gray-900">Invoice Management</h1>
+        <p className="text-sm text-gray-600">Generate and manage GST-compliant invoices</p>
+      </div>
+      <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+        <p className="text-gray-500">Invoice Management Module - Coming Soon</p>
+      </div>
+    </div>
+  );
+}
