@@ -1,7 +1,10 @@
 // src/app/pages/hr/Documentation.jsx
 import { FileText, Upload, Download, Eye, AlertTriangle } from 'lucide-react';
+import { useState } from 'react';
+import { UploadDocumentModal } from '../../components/recruitment/UploadDocumentModal';
 
 export default function HRDocumentation() {
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const employeeDocs = [
     {
       id: 1,
@@ -71,6 +74,11 @@ export default function HRDocumentation() {
     }
   };
 
+  const handleDocumentUploaded = () => {
+    console.log('Document uploaded successfully!');
+    // Refresh document list or show toast
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -79,7 +87,7 @@ export default function HRDocumentation() {
           <h1 className="font-bold text-gray-900">Employee Documentation</h1>
           <p className="text-sm text-gray-600">Manage employee documents and track expiry dates</p>
         </div>
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        <button onClick={() => setIsUploadModalOpen(true)} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
           <Upload className="size-4" />
           Upload Documents
         </button>
@@ -207,12 +215,11 @@ export default function HRDocumentation() {
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
                       <div className="flex-1 bg-gray-200 rounded-full h-2">
-                        <div 
-                          className={`h-2 rounded-full ${
-                            emp.completeness >= 90 ? 'bg-green-500' :
-                            emp.completeness >= 70 ? 'bg-yellow-500' :
-                            'bg-red-500'
-                          }`}
+                        <div
+                          className={`h-2 rounded-full ${emp.completeness >= 90 ? 'bg-green-500' :
+                              emp.completeness >= 70 ? 'bg-yellow-500' :
+                                'bg-red-500'
+                            }`}
                           style={{ width: `${emp.completeness}%` }}
                         />
                       </div>
@@ -235,6 +242,12 @@ export default function HRDocumentation() {
           </table>
         </div>
       </div>
+
+      <UploadDocumentModal
+        open={isUploadModalOpen}
+        onOpenChange={setIsUploadModalOpen}
+        onSuccess={handleDocumentUploaded}
+      />
     </div>
   );
 }

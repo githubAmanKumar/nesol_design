@@ -1,15 +1,16 @@
 // src/app/pages/hr/Recruitment.jsx
 import { useState } from 'react';
 import { Plus, Search, Filter, Eye, Calendar, Users, Briefcase } from 'lucide-react';
+import { PostJobModal } from '../../components/recruitment/PostJobModal';
 
 export default function HRRecruitment() {
   const [activeTab, setActiveTab] = useState<'jobs' | 'applicants' | 'interviews'>('jobs');
-
+  const [isPostJobModalOpen, setIsPostJobModalOpen] = useState(false);
   const jobPostings = [
-    { 
-      id: 'JOB-001', 
-      title: 'Production Engineer', 
-      department: 'Production', 
+    {
+      id: 'JOB-001',
+      title: 'Production Engineer',
+      department: 'Production',
       location: 'Plant - Roorkee',
       type: 'Full-time',
       openings: 2,
@@ -18,10 +19,10 @@ export default function HRRecruitment() {
       applicants: 45,
       posted: '2026-04-10'
     },
-    { 
-      id: 'JOB-002', 
-      title: 'Quality Inspector', 
-      department: 'Quality', 
+    {
+      id: 'JOB-002',
+      title: 'Quality Inspector',
+      department: 'Quality',
       location: 'Plant - Roorkee',
       type: 'Full-time',
       openings: 3,
@@ -30,10 +31,10 @@ export default function HRRecruitment() {
       applicants: 67,
       posted: '2026-04-05'
     },
-    { 
-      id: 'JOB-003', 
-      title: 'Sales Executive', 
-      department: 'Sales', 
+    {
+      id: 'JOB-003',
+      title: 'Sales Executive',
+      department: 'Sales',
       location: 'Office',
       type: 'Full-time',
       openings: 5,
@@ -42,10 +43,10 @@ export default function HRRecruitment() {
       applicants: 89,
       posted: '2026-04-01'
     },
-    { 
-      id: 'JOB-004', 
-      title: 'R&D Chemist', 
-      department: 'R&D', 
+    {
+      id: 'JOB-004',
+      title: 'R&D Chemist',
+      department: 'R&D',
       location: 'Plant - Roorkee',
       type: 'Full-time',
       openings: 1,
@@ -57,7 +58,7 @@ export default function HRRecruitment() {
   ];
 
   const applicants = [
-    { 
+    {
       id: 'CAND-1001',
       name: 'Rahul Kumar',
       email: 'rahul.k@email.com',
@@ -69,7 +70,7 @@ export default function HRRecruitment() {
       stage: 'Interview Scheduled',
       appliedDate: '2026-04-12'
     },
-    { 
+    {
       id: 'CAND-1002',
       name: 'Priya Sharma',
       email: 'priya.sharma@email.com',
@@ -81,7 +82,7 @@ export default function HRRecruitment() {
       stage: 'Shortlisted',
       appliedDate: '2026-04-11'
     },
-    { 
+    {
       id: 'CAND-1003',
       name: 'Amit Singh',
       email: 'amit.s@email.com',
@@ -155,6 +156,12 @@ export default function HRRecruitment() {
     }
   };
 
+  const handleJobPosted = () => {
+    // Refresh job listings or show success notification
+    console.log('Job posted successfully!');
+    // You can add a toast notification here
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -163,7 +170,7 @@ export default function HRRecruitment() {
           <h1 className="font-bold text-gray-900">Recruitment Management</h1>
           <p className="text-sm text-gray-600">Manage job postings, applicants, and interviews</p>
         </div>
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        <button onClick={() => setIsPostJobModalOpen(true)} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
           <Plus className="size-4" />
           Post New Job
         </button>
@@ -223,31 +230,28 @@ export default function HRRecruitment() {
           <nav className="flex gap-4 px-6">
             <button
               onClick={() => setActiveTab('jobs')}
-              className={`py-4 px-2 border-b-2 text-sm font-medium transition-colors ${
-                activeTab === 'jobs'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
-              }`}
+              className={`py-4 px-2 border-b-2 text-sm font-medium transition-colors ${activeTab === 'jobs'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-600 hover:text-gray-900'
+                }`}
             >
               Job Postings
             </button>
             <button
               onClick={() => setActiveTab('applicants')}
-              className={`py-4 px-2 border-b-2 text-sm font-medium transition-colors ${
-                activeTab === 'applicants'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
-              }`}
+              className={`py-4 px-2 border-b-2 text-sm font-medium transition-colors ${activeTab === 'applicants'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-600 hover:text-gray-900'
+                }`}
             >
               Applicants (ATS)
             </button>
             <button
               onClick={() => setActiveTab('interviews')}
-              className={`py-4 px-2 border-b-2 text-sm font-medium transition-colors ${
-                activeTab === 'interviews'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
-              }`}
+              className={`py-4 px-2 border-b-2 text-sm font-medium transition-colors ${activeTab === 'interviews'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-600 hover:text-gray-900'
+                }`}
             >
               Interviews
             </button>
@@ -412,6 +416,12 @@ export default function HRRecruitment() {
           )}
         </div>
       </div>
+
+      <PostJobModal
+        open={isPostJobModalOpen}
+        onOpenChange={setIsPostJobModalOpen}
+        onSuccess={handleJobPosted}
+      />
     </div>
   );
 }
