@@ -1,3 +1,4 @@
+// src/app/pages/production/InventoryManagement.jsx
 import { Package, TrendingDown, TrendingUp, AlertTriangle } from 'lucide-react';
 
 export default function InventoryManagement() {

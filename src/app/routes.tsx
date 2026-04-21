@@ -21,6 +21,7 @@ import AfterSalesSupport from "./pages/support/AfterSalesSupport";
 import WarrantyManagement from "./pages/support/WarrantyManagement";
 import Reports from "./pages/Reports";
 import AssetsManagement from "./pages/AssetsManagement";
+import IncidentManagement from "./pages/IncidentManagement";
 import NotFound from "./pages/NotFound";
 
 export const router = createBrowserRouter([
@@ -65,6 +66,8 @@ export const router = createBrowserRouter([
       // Others
       { path: "reports", Component: Reports },
       { path: "assets", Component: AssetsManagement },
+      { path: "incident", Component: IncidentManagement },
+
       
       { path: "*", Component: NotFound },
     ],

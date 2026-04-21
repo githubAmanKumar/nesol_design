@@ -1,3 +1,4 @@
+// src/app/pages/Dashboard.tsx
 import { 
   Users, DollarSign, Package, TrendingUp, AlertCircle, 
   Calendar, Battery, CheckCircle, Clock, XCircle

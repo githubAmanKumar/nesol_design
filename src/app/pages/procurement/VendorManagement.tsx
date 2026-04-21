@@ -1,3 +1,4 @@
+// src/app/pages/procurement/VendorManagement.jsx
 export default function VendorManagement() {
   return (
     <div className="space-y-6">

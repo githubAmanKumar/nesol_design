@@ -1,3 +1,4 @@
+// src/app/pages/hr/Documentation.jsx
 import { FileText, Upload, Download, Eye, AlertTriangle } from 'lucide-react';
 
 export default function HRDocumentation() {

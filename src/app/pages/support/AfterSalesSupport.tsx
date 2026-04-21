@@ -1,3 +1,4 @@
+// src/app/pages/support/AfterSalesSupport.tsx
 export default function AfterSalesSupport() {
   return (
     <div className="space-y-6">

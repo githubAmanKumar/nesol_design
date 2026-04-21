@@ -1,3 +1,4 @@
+// src/app/pages/finance/SalaryManagement.jsx
 import { DollarSign, Download, Send, FileText } from 'lucide-react';
 
 export default function SalaryManagement() {

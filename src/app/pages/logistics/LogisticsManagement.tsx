@@ -1,3 +1,4 @@
+// src/app/pages/logistics/LogisticsManagement.jsx
 export default function LogisticsManagement() {
   return (
     <div className="space-y-6">

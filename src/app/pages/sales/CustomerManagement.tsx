@@ -1,3 +1,4 @@
+// src/app/pages/sales/CustomerManagement.tsx
 export default function CustomerManagement() {
   return (
     <div className="space-y-6">

@@ -1,3 +1,4 @@
+// src/app/pages/support/WarrantyManagement.tsx
 export default function WarrantyManagement() {
   return (
     <div className="space-y-6">

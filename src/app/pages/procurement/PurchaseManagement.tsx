@@ -1,3 +1,4 @@
+// src/app/pages/procurement/PurchaseManagement.jsx
 export default function PurchaseManagement() {
   return (
     <div className="space-y-6">

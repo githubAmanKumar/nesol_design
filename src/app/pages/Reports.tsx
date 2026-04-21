@@ -1,3 +1,4 @@
+// src/app/pages/Reports.jsx
 export default function Reports() {
   return (
     <div className="space-y-6">

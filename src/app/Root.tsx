@@ -1,3 +1,4 @@
+// src/app/Root.tsx
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router';
 import { 
@@ -93,6 +94,7 @@ export default function Root() {
     },
     { path: '/reports', label: 'Reports', icon: FileText },
     { path: '/assets', label: 'Assets', icon: Building2 },
+    { path: '/incident', label: 'Incident', icon: Building2 },
   ];
 
   return (

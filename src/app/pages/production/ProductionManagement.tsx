@@ -1,3 +1,4 @@
+// src/app/pages/production/ProductionManagement.jsx
 export default function ProductionManagement() {
   return (
     <div className="space-y-6">

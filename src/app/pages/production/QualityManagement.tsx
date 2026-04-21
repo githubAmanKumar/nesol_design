@@ -1,3 +1,4 @@
+// src/app/pages/production/QualityManagement.jsx
 export default function QualityManagement() {
   return (
     <div className="space-y-6">
