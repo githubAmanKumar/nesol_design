@@ -1,16 +1,18 @@
 // src/app/pages/procurement/VendorManagement.tsx
 import { useState } from 'react';
-import { 
-  Building2, Users, Phone, Mail, MapPin, CreditCard, 
-  Star, TrendingUp, TrendingDown, Search, Filter, 
+import {
+  Building2, Users, Phone, Mail, MapPin, CreditCard,
+  Star, TrendingUp, TrendingDown, Search, Filter,
   Download, Plus, Eye, FileText, DollarSign, AlertCircle,
   MoreVertical, CheckCircle, XCircle, Clock, Calendar,
   ChevronDown, BarChart3, Truck, Wrench, Package
 } from 'lucide-react';
+import { AddVendorModal } from '../../components/procurement/AddVendorModal';
 
 export default function VendorManagement() {
   const [activeTab, setActiveTab] = useState<'master' | 'rating' | 'payment'>('master');
   const [selectedVendor, setSelectedVendor] = useState<string | null>(null);
+  const [isAddVendorModalOpen, setIsAddVendorModalOpen] = useState(false);
 
   const vendors = [
     {
@@ -274,6 +276,11 @@ export default function VendorManagement() {
     return `₹${amount.toLocaleString('en-IN')}`;
   };
 
+  const handleVendorAdded = () => {
+    console.log('Vendor added successfully!');
+    // Refresh vendor list or show toast
+  };
+
   const renderStars = (rating: number) => {
     return (
       <div className="flex items-center">
@@ -300,7 +307,9 @@ export default function VendorManagement() {
             <Download className="size-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button
+            onClick={() => setIsAddVendorModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             Add Vendor
           </button>
@@ -346,14 +355,13 @@ export default function VendorManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === tab
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab
                   ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+                }`}
             >
-              {tab === 'master' ? 'Vendor Master' : 
-               tab === 'rating' ? 'Vendor Rating' : 'Vendor Payments'}
+              {tab === 'master' ? 'Vendor Master' :
+                tab === 'rating' ? 'Vendor Rating' : 'Vendor Payments'}
             </button>
           ))}
         </nav>
@@ -412,7 +420,7 @@ export default function VendorManagement() {
                         <span className="text-xs text-gray-400">|</span>
                         <span className="text-sm text-gray-600">{vendor.category}</span>
                       </div>
-                      
+
                       <div className="grid grid-cols-2 gap-4 mt-3">
                         <div>
                           <p className="text-xs text-gray-500 mb-1">Contact Information</p>
@@ -517,7 +525,7 @@ export default function VendorManagement() {
                         {rating.status}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Quality Rating</p>
@@ -554,7 +562,7 @@ export default function VendorManagement() {
                         </span>
                       </div>
                     </div>
-                    
+
                     {rating.remarks && (
                       <p className="text-sm text-gray-600 mt-2">
                         <span className="font-medium">Remarks:</span> {rating.remarks}
@@ -621,7 +629,7 @@ export default function VendorManagement() {
                     <span className="text-xs text-gray-400">|</span>
                     <span className="text-sm text-gray-600">{payment.vendorId}</span>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                     <div>
                       <p className="text-xs text-gray-500">Outstanding Amount</p>
@@ -683,7 +691,7 @@ export default function VendorManagement() {
                     const dueDate = new Date(payment.nextPaymentDue);
                     const today = new Date('2026-04-20');
                     const daysUntilDue = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-                    
+
                     return (
                       <tr key={payment.vendorId} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="py-3 px-4 text-sm text-gray-900">{payment.vendorName}</td>
@@ -694,13 +702,12 @@ export default function VendorManagement() {
                           {new Date(payment.nextPaymentDue).toLocaleDateString('en-IN')}
                         </td>
                         <td className="py-3 px-4">
-                          <span className={`text-xs px-2 py-1 rounded ${
-                            daysUntilDue < 0 ? 'bg-red-100 text-red-700' :
-                            daysUntilDue <= 7 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'
-                          }`}>
+                          <span className={`text-xs px-2 py-1 rounded ${daysUntilDue < 0 ? 'bg-red-100 text-red-700' :
+                              daysUntilDue <= 7 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'
+                            }`}>
                             {daysUntilDue < 0 ? `${Math.abs(daysUntilDue)} days overdue` :
-                             daysUntilDue === 0 ? 'Due today' :
-                             `Due in ${daysUntilDue} days`}
+                              daysUntilDue === 0 ? 'Due today' :
+                                `Due in ${daysUntilDue} days`}
                           </span>
                         </td>
                       </tr>
@@ -712,6 +719,12 @@ export default function VendorManagement() {
           </div>
         </div>
       )}
+
+      <AddVendorModal
+        open={isAddVendorModalOpen}
+        onOpenChange={setIsAddVendorModalOpen}
+        onSuccess={handleVendorAdded}
+      />
     </div>
   );
 }
