@@ -1,15 +1,17 @@
 // src/app/pages/finance/ExpensesManagement.tsx
 import { useState } from 'react';
-import { 
-  Receipt, Search, Filter, Download, Plus, Eye, CheckCircle, 
+import {
+  Receipt, Search, Filter, Download, Plus, Eye, CheckCircle,
   XCircle, Clock, Calendar, DollarSign, FileText, MoreVertical,
   TrendingUp, AlertCircle, ChevronDown, Upload
 } from 'lucide-react';
+import { NewExpenseClaimModal } from '../../components/finance/NewExpenseClaimModal';
 
 export default function ExpensesManagement() {
   const [activeTab, setActiveTab] = useState<'claims' | 'pettycash' | 'summary'>('claims');
   const [selectedClaim, setSelectedClaim] = useState<string | null>(null);
   const [showApprovalModal, setShowApprovalModal] = useState(false);
+  const [isNewClaimModalOpen, setIsNewClaimModalOpen] = useState(false);
 
   const expenseClaims = [
     {
@@ -218,6 +220,10 @@ export default function ExpensesManagement() {
     }
   };
 
+  const handleClaimSubmitted = () => {
+    console.log('Expense claim submitted successfully!');
+    // Refresh claims list or show toast
+  };
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -230,7 +236,9 @@ export default function ExpensesManagement() {
             <Download className="size-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button
+            onClick={() => setIsNewClaimModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             New Expense Claim
           </button>
@@ -276,11 +284,10 @@ export default function ExpensesManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === tab
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
             >
               {tab === 'claims' ? 'Expense Claims' : tab === 'pettycash' ? 'Petty Cash' : 'Monthly Summary'}
             </button>
@@ -327,11 +334,10 @@ export default function ExpensesManagement() {
             <div key={claim.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
-                  <div className={`p-2 rounded ${
-                    claim.status === 'Pending' ? 'bg-yellow-50' :
+                  <div className={`p-2 rounded ${claim.status === 'Pending' ? 'bg-yellow-50' :
                     claim.status === 'Approved by Manager' ? 'bg-blue-50' :
-                    claim.status === 'Paid' ? 'bg-green-50' : 'bg-red-50'
-                  }`}>
+                      claim.status === 'Paid' ? 'bg-green-50' : 'bg-red-50'
+                    }`}>
                     <span className="text-xl">{getCategoryIcon(claim.category)}</span>
                   </div>
                   <div>
@@ -364,7 +370,7 @@ export default function ExpensesManagement() {
                         </button>
                       )}
                     </div>
-                    
+
                     {/* Approval Workflow Info */}
                     <div className="mt-3 pt-3 border-t border-gray-100">
                       <div className="flex items-center gap-6">
@@ -418,7 +424,7 @@ export default function ExpensesManagement() {
                 <div className="flex items-center gap-2">
                   {claim.status === 'Pending' && (
                     <>
-                      <button 
+                      <button
                         className="p-2 text-green-600 hover:bg-green-50 rounded"
                         onClick={() => setShowApprovalModal(true)}
                       >
@@ -509,16 +515,14 @@ export default function ExpensesManagement() {
                       <td className="py-3 px-4 text-sm text-gray-900">{entry.paidTo}</td>
                       <td className="py-3 px-4 text-sm text-gray-600">{entry.purpose}</td>
                       <td className="py-3 px-4">
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          entry.type === 'Receipt' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
-                        }`}>
+                        <span className={`text-xs px-2 py-1 rounded ${entry.type === 'Receipt' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                          }`}>
                           {entry.type}
                         </span>
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <span className={`text-sm font-medium ${
-                          entry.type === 'Receipt' ? 'text-green-600' : 'text-red-600'
-                        }`}>
+                        <span className={`text-sm font-medium ${entry.type === 'Receipt' ? 'text-green-600' : 'text-red-600'
+                          }`}>
                           {entry.type === 'Receipt' ? '+' : '-'}₹{entry.amount.toLocaleString()}
                         </span>
                       </td>
@@ -589,8 +593,8 @@ export default function ExpensesManagement() {
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <div className="w-16 bg-gray-200 rounded-full h-1.5">
-                            <div 
-                              className="bg-green-500 h-1.5 rounded-full" 
+                            <div
+                              className="bg-green-500 h-1.5 rounded-full"
                               style={{ width: `${(dept.approved / dept.submitted) * 100}%` }}
                             />
                           </div>
@@ -692,6 +696,12 @@ export default function ExpensesManagement() {
           </div>
         </div>
       )}
+
+      <NewExpenseClaimModal
+        open={isNewClaimModalOpen}
+        onOpenChange={setIsNewClaimModalOpen}
+        onSuccess={handleClaimSubmitted}
+      />
     </div>
   );
 }
