@@ -1,16 +1,18 @@
 // src/app/pages/sales/CustomerManagement.tsx
 import { useState } from 'react';
-import { 
-  Building2, Users, Phone, Mail, MapPin, CreditCard, 
-  Calendar, Search, Filter, Download, Plus, Eye, 
+import {
+  Building2, Users, Phone, Mail, MapPin, CreditCard,
+  Calendar, Search, Filter, Download, Plus, Eye,
   FileText, DollarSign, MessageCircle, AlertCircle,
   MoreVertical, ChevronDown, TrendingUp, Clock,
   CheckCircle, XCircle, Send, History, Star, Bell
 } from 'lucide-react';
+import { AddCustomerModal } from '../../components/sales/AddCustomerModal';
 
 export default function CustomerManagement() {
   const [activeTab, setActiveTab] = useState<'master' | 'ledger' | 'communication' | 'preferences'>('master');
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
+  const [isAddCustomerModalOpen, setIsAddCustomerModalOpen] = useState(false);
 
   const customers = [
     {
@@ -356,7 +358,7 @@ export default function CustomerManagement() {
     totalCustomers: customers.length,
     activeCustomers: customers.filter(c => c.status === 'Active').length,
     totalOutstanding: customers.reduce((sum, c) => sum + c.outstandingAmount, 0),
-    followupsToday: communicationLogs.filter(l => 
+    followupsToday: communicationLogs.filter(l =>
       l.followupRequired && l.nextFollowupDate === '2026-04-20'
     ).length,
   };
@@ -380,6 +382,11 @@ export default function CustomerManagement() {
     return `₹${amount.toLocaleString('en-IN')}`;
   };
 
+
+  const handleCustomerAdded = () => {
+    console.log("Customer created successfully");
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -392,7 +399,9 @@ export default function CustomerManagement() {
             <Download className="size-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button
+            onClick={() => setIsAddCustomerModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             Add Customer
           </button>
@@ -447,18 +456,16 @@ export default function CustomerManagement() {
               return (
                 <div key={alert.id} className="flex items-center justify-between bg-white rounded p-3">
                   <div className="flex items-center gap-3">
-                    <AlertCircle className={`size-4 ${
-                      alert.severity === 'High' ? 'text-red-500' : 'text-orange-500'
-                    }`} />
+                    <AlertCircle className={`size-4 ${alert.severity === 'High' ? 'text-red-500' : 'text-orange-500'
+                      }`} />
                     <div>
                       <p className="text-sm font-medium text-gray-900">{customer?.companyName}</p>
                       <p className="text-xs text-gray-500">{alert.message}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className={`text-xs px-2 py-0.5 rounded ${
-                      alert.severity === 'High' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'
-                    }`}>
+                    <span className={`text-xs px-2 py-0.5 rounded ${alert.severity === 'High' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'
+                      }`}>
                       {alert.type}
                     </span>
                     <button className="text-sm text-blue-600 hover:text-blue-700">
@@ -479,15 +486,14 @@ export default function CustomerManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === tab
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
             >
-              {tab === 'master' ? 'Customer Master' : 
-               tab === 'ledger' ? 'Customer Ledger' : 
-               tab === 'communication' ? 'Communication Log' : 'Product Preferences'}
+              {tab === 'master' ? 'Customer Master' :
+                tab === 'ledger' ? 'Customer Ledger' :
+                  tab === 'communication' ? 'Communication Log' : 'Product Preferences'}
             </button>
           ))}
         </nav>
@@ -535,13 +541,12 @@ export default function CustomerManagement() {
                       <span className={`text-xs px-2 py-0.5 rounded ${typeColors[customer.type]}`}>
                         {customer.type}
                       </span>
-                      <span className={`text-xs px-2 py-0.5 rounded ${
-                        customer.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-                      }`}>
+                      <span className={`text-xs px-2 py-0.5 rounded ${customer.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                        }`}>
                         {customer.status}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 mt-3">
                       <div>
                         <p className="text-xs text-gray-500 mb-1">GSTIN / PAN</p>
@@ -734,24 +739,22 @@ export default function CustomerManagement() {
               Log Communication
             </button>
           </div>
-          
+
           {communicationLogs.map((log) => {
             const customer = customers.find(c => c.id === log.customerId);
             const TypeIcon = communicationTypeIcons[log.type] || MessageCircle;
-            
+
             return (
               <div key={log.id} className="bg-white rounded-lg border border-gray-200 p-4">
                 <div className="flex items-start gap-4">
-                  <div className={`p-2 rounded ${
-                    log.type === 'Call' ? 'bg-green-50' :
+                  <div className={`p-2 rounded ${log.type === 'Call' ? 'bg-green-50' :
                     log.type === 'Email' ? 'bg-blue-50' :
-                    log.type === 'Meeting' ? 'bg-purple-50' : 'bg-gray-50'
-                  }`}>
-                    <TypeIcon className={`size-5 ${
-                      log.type === 'Call' ? 'text-green-500' :
+                      log.type === 'Meeting' ? 'bg-purple-50' : 'bg-gray-50'
+                    }`}>
+                    <TypeIcon className={`size-5 ${log.type === 'Call' ? 'text-green-500' :
                       log.type === 'Email' ? 'text-blue-500' :
-                      log.type === 'Meeting' ? 'text-purple-500' : 'text-gray-500'
-                    }`} />
+                        log.type === 'Meeting' ? 'text-purple-500' : 'text-gray-500'
+                      }`} />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
@@ -801,7 +804,7 @@ export default function CustomerManagement() {
                       <span className="text-xs text-gray-400">|</span>
                       <span className="text-sm text-gray-600">{pref.customerId}</span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="text-xs text-gray-500 mb-2">Preferred Categories</p>
@@ -845,6 +848,11 @@ export default function CustomerManagement() {
           })}
         </div>
       )}
+      <AddCustomerModal
+        open={isAddCustomerModalOpen}
+        onOpenChange={setIsAddCustomerModalOpen}
+        onSuccess={handleCustomerAdded}
+      />
     </div>
   );
 }
