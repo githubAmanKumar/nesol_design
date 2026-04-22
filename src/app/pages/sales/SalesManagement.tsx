@@ -1,20 +1,22 @@
 // src/app/pages/sales/SalesManagement.tsx
 import { useState } from 'react';
-import { 
-  TrendingUp, Users, FileText, ShoppingCart, Truck, 
-  RotateCcw, Target, Search, Filter, Download, Plus, 
+import {
+  TrendingUp, Users, FileText, ShoppingCart, Truck,
+  RotateCcw, Target, Search, Filter, Download, Plus,
   Eye, Send, CheckCircle, XCircle, Clock, Calendar,
   DollarSign, MoreVertical, ChevronDown, Phone, Mail,
   MapPin, Building2, Printer, CreditCard, AlertCircle
 } from 'lucide-react';
-import { 
-  BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, 
-  Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell 
+import {
+  BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
+  Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell
 } from 'recharts';
+import { NewLeadModal } from '../../components/sales/NewLeadModal';
 
 export default function SalesManagement() {
   const [activeTab, setActiveTab] = useState<'leads' | 'quotations' | 'orders' | 'performance'>('leads');
   const [selectedLead, setSelectedLead] = useState<string | null>(null);
+  const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false);
 
   const leads = [
     {
@@ -335,6 +337,10 @@ export default function SalesManagement() {
     return `₹${amount.toLocaleString('en-IN')}`;
   };
 
+  const handleLeadCreated = () => {
+    console.log("Lead created successfully");
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -347,7 +353,9 @@ export default function SalesManagement() {
             <Download className="size-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button
+            onClick={() => setIsNewLeadModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             New Lead
           </button>
@@ -393,15 +401,14 @@ export default function SalesManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === tab
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
             >
-              {tab === 'leads' ? 'Lead Management' : 
-               tab === 'quotations' ? 'Quotations' : 
-               tab === 'orders' ? 'Sales Orders' : 'Sales Performance'}
+              {tab === 'leads' ? 'Lead Management' :
+                tab === 'quotations' ? 'Quotations' :
+                  tab === 'orders' ? 'Sales Orders' : 'Sales Performance'}
             </button>
           ))}
         </nav>
@@ -538,7 +545,7 @@ export default function SalesManagement() {
                       <span>•</span>
                       <span>Valid Until: {new Date(quote.validityDate).toLocaleDateString('en-IN')}</span>
                     </div>
-                    
+
                     {/* Line Items */}
                     <div className="mt-2 bg-gray-50 rounded p-3">
                       <table className="w-full text-sm">
@@ -708,9 +715,8 @@ export default function SalesManagement() {
                       <td className="py-3 px-4 text-sm text-gray-600">{dispatch.lrNumber}</td>
                       <td className="py-3 px-4 text-right text-sm text-gray-900">{dispatch.dispatchedQty}</td>
                       <td className="py-3 px-4">
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          dispatch.status === 'Delivered' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                        }`}>
+                        <span className={`text-xs px-2 py-1 rounded ${dispatch.status === 'Delivered' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                          }`}>
                           {dispatch.status}
                         </span>
                       </td>
@@ -784,14 +790,13 @@ export default function SalesManagement() {
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-gray-500">Achievement</p>
-                    <p className={`text-2xl font-bold ${
-                      perf.achievementPercent >= 100 ? 'text-green-600' : 'text-orange-600'
-                    }`}>
+                    <p className={`text-2xl font-bold ${perf.achievementPercent >= 100 ? 'text-green-600' : 'text-orange-600'
+                      }`}>
                       {perf.achievementPercent}%
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   {/* Value Target */}
                   <div>
@@ -802,13 +807,13 @@ export default function SalesManagement() {
                       </span>
                     </div>
                     <div className="bg-gray-200 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-blue-500 h-2 rounded-full"
                         style={{ width: `${Math.min((perf.actualValue / perf.targetValue) * 100, 100)}%` }}
                       />
                     </div>
                   </div>
-                  
+
                   {/* Unit Target */}
                   <div>
                     <div className="flex justify-between text-sm mb-1">
@@ -818,7 +823,7 @@ export default function SalesManagement() {
                       </span>
                     </div>
                     <div className="bg-gray-200 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-green-500 h-2 rounded-full"
                         style={{ width: `${Math.min((perf.actualUnits / perf.targetUnits) * 100, 100)}%` }}
                       />
@@ -851,6 +856,11 @@ export default function SalesManagement() {
           </div>
         </div>
       )}
+      <NewLeadModal
+      open={isNewLeadModalOpen}
+      onOpenChange={setIsNewLeadModalOpen}
+      onSuccess={handleLeadCreated}
+      />
     </div>
   );
 }
