@@ -1,7 +1,10 @@
 // src/app/pages/finance/SalaryManagement.jsx
 import { DollarSign, Download, Send, FileText } from 'lucide-react';
+import { useState } from 'react';
+import { ProcessPayrollModal } from '../../components/finance/ProcessPayrollModal';
 
 export default function SalaryManagement() {
+  const [isProcessModalOpen, setIsProcessModalOpen] = useState(false);
   const payrollData = [
     {
       empId: 'NES/EMP/001',
@@ -59,6 +62,11 @@ export default function SalaryManagement() {
     pending: 38
   };
 
+  const handlePayrollProcessed = () => {
+    console.log('Payroll processed successfully!');
+    // Refresh payroll data or show toast
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -73,7 +81,9 @@ export default function SalaryManagement() {
             <option>March 2026</option>
             <option>February 2026</option>
           </select>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button
+            onClick={() => setIsProcessModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Send className="size-4" />
             Process Payroll
           </button>
@@ -166,9 +176,8 @@ export default function SalaryManagement() {
                   <td className="py-3 px-4 text-right text-red-600 font-medium">₹{emp.deductions.toLocaleString()}</td>
                   <td className="py-3 px-4 text-right text-green-600 font-bold">₹{emp.netPay.toLocaleString()}</td>
                   <td className="py-3 px-4">
-                    <span className={`text-xs px-2 py-1 rounded ${
-                      emp.status === 'Processed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                    }`}>
+                    <span className={`text-xs px-2 py-1 rounded ${emp.status === 'Processed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                      }`}>
                       {emp.status}
                     </span>
                   </td>
@@ -183,6 +192,12 @@ export default function SalaryManagement() {
           </table>
         </div>
       </div>
+
+      <ProcessPayrollModal
+        open={isProcessModalOpen}
+        onOpenChange={setIsProcessModalOpen}
+        onSuccess={handlePayrollProcessed}
+      />
     </div>
   );
 }
