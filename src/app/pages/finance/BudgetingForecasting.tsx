@@ -11,11 +11,13 @@ import {
   BarChart, Bar, LineChart as RechartsLineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
+import { NewBudgetModal } from '../../components/finance/NewBudgetModal';
 
 export default function BudgetingForecasting() {
   const [selectedYear, setSelectedYear] = useState('2026-2027');
   const [expandedDept, setExpandedDept] = useState<string | null>('Production');
   const [activeTab, setActiveTab] = useState<'budget' | 'variance' | 'forecast'>('budget');
+  const [isNewBudgetModalOpen, setIsNewBudgetModalOpen] = useState(false);
 
   const annualBudgets = [
     {
@@ -197,6 +199,11 @@ export default function BudgetingForecasting() {
     return `₹${amount.toLocaleString('en-IN')}`;
   };
 
+  const handleBudgetCreated = () => {
+    console.log('Budget created successfully!');
+    // Refresh budget list or show toast
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -218,7 +225,9 @@ export default function BudgetingForecasting() {
             <Download className="size-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button 
+          onClick={() => setIsNewBudgetModalOpen(true)}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             New Budget
           </button>
@@ -640,6 +649,12 @@ export default function BudgetingForecasting() {
           </div>
         </div>
       )}
+
+      <NewBudgetModal
+        open={isNewBudgetModalOpen}
+        onOpenChange={setIsNewBudgetModalOpen}
+        onSuccess={handleBudgetCreated}
+      />
     </div>
   );
 }
