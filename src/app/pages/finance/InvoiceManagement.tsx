@@ -1,16 +1,18 @@
 // src/app/pages/finance/InvoiceManagement.tsx
 import { useState } from 'react';
-import { 
+import {
   FileText, Search, Filter, Download, Plus, Eye, Send,
   CheckCircle, XCircle, Clock, Calendar, DollarSign,
   MoreVertical, Printer, Mail, QrCode, AlertCircle,
   ChevronDown, TrendingUp, CreditCard, Ban
 } from 'lucide-react';
+import { NewInvoiceModal } from '../../components/finance/NewInvoiceModal';
 
 export default function InvoiceManagement() {
   const [activeTab, setActiveTab] = useState<'invoices' | 'aging' | 'einvoice'>('invoices');
   const [selectedInvoices, setSelectedInvoices] = useState<string[]>([]);
   const [showEmailModal, setShowEmailModal] = useState(false);
+  const [isNewInvoiceModalOpen, setIsNewInvoiceModalOpen] = useState(false);
 
   const invoices = [
     {
@@ -312,6 +314,12 @@ export default function InvoiceManagement() {
     return `₹${amount.toLocaleString('en-IN')}`;
   };
 
+
+  const handleInvoiceCreated = () => {
+    console.log('Invoice created successfully!');
+    // Refresh invoice list or show toast
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -324,7 +332,9 @@ export default function InvoiceManagement() {
             <Download className="size-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button
+            onClick={() => setIsNewInvoiceModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             New Invoice
           </button>
@@ -377,11 +387,10 @@ export default function InvoiceManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === tab
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab
                   ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+                }`}
             >
               {tab === 'invoices' ? 'All Invoices' : tab === 'aging' ? 'Aging Report' : 'E-Invoice Status'}
             </button>
@@ -426,7 +435,7 @@ export default function InvoiceManagement() {
             {selectedInvoices.length} invoice(s) selected
           </span>
           <div className="flex items-center gap-2">
-            <button 
+            <button
               className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
               onClick={() => setShowEmailModal(true)}
             >
@@ -449,8 +458,8 @@ export default function InvoiceManagement() {
               <thead>
                 <tr className="border-b border-gray-200 bg-gray-50">
                   <th className="text-left py-3 px-4 text-xs text-gray-600">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       className="rounded border-gray-300"
                       onChange={(e) => {
                         if (e.target.checked) {
@@ -480,8 +489,8 @@ export default function InvoiceManagement() {
                   return (
                     <tr key={invoice.id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-3 px-4">
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           className="rounded border-gray-300"
                           checked={selectedInvoices.includes(invoice.id)}
                           onChange={(e) => {
@@ -500,11 +509,10 @@ export default function InvoiceManagement() {
                         )}
                       </td>
                       <td className="py-3 px-4">
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          invoice.type === 'Tax Invoice' ? 'bg-blue-100 text-blue-700' :
-                          invoice.type === 'Credit Note' ? 'bg-orange-100 text-orange-700' :
-                          'bg-gray-100 text-gray-700'
-                        }`}>
+                        <span className={`text-xs px-2 py-1 rounded ${invoice.type === 'Tax Invoice' ? 'bg-blue-100 text-blue-700' :
+                            invoice.type === 'Credit Note' ? 'bg-orange-100 text-orange-700' :
+                              'bg-gray-100 text-gray-700'
+                          }`}>
                           {invoice.type}
                         </span>
                       </td>
@@ -609,7 +617,7 @@ export default function InvoiceManagement() {
                     const dueDate = new Date(item.dueDate);
                     const today = new Date('2026-04-20');
                     const daysOverdue = Math.max(0, Math.floor((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24)));
-                    
+
                     return (
                       <tr key={item.invoiceNumber} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="py-3 px-4 text-sm font-medium text-gray-900">{item.customerName}</td>
@@ -629,10 +637,9 @@ export default function InvoiceManagement() {
                           </span>
                         </td>
                         <td className="py-3 px-4 text-right">
-                          <span className={`text-sm font-medium ${
-                            daysOverdue > 60 ? 'text-red-600' : 
-                            daysOverdue > 30 ? 'text-orange-600' : 'text-gray-600'
-                          }`}>
+                          <span className={`text-sm font-medium ${daysOverdue > 60 ? 'text-red-600' :
+                              daysOverdue > 30 ? 'text-orange-600' : 'text-gray-600'
+                            }`}>
                             {daysOverdue} days
                           </span>
                         </td>
@@ -764,8 +771,8 @@ export default function InvoiceManagement() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Email Subject
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   defaultValue="Invoice from Nesol Energies Pvt Ltd"
                 />
@@ -774,7 +781,7 @@ export default function InvoiceManagement() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Email Body
                 </label>
-                <textarea 
+                <textarea
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   rows={4}
                   defaultValue="Dear Customer,\n\nPlease find attached invoice(s) for your reference.\n\nThank you for your business.\n\nRegards,\nNesol Energies Pvt Ltd"
@@ -786,7 +793,7 @@ export default function InvoiceManagement() {
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
-              <button 
+              <button
                 className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
                 onClick={() => setShowEmailModal(false)}
               >
@@ -800,6 +807,12 @@ export default function InvoiceManagement() {
           </div>
         </div>
       )}
+
+      <NewInvoiceModal
+        open={isNewInvoiceModalOpen}
+        onOpenChange={setIsNewInvoiceModalOpen}
+        onSuccess={handleInvoiceCreated}
+      />
     </div>
   );
 }
