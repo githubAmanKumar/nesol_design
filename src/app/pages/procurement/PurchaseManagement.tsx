@@ -1,17 +1,19 @@
 // src/app/pages/procurement/PurchaseManagement.tsx
 import { useState } from 'react';
-import { 
-  Package, Truck, ClipboardList, RotateCcw, Search, 
-  Filter, Download, Plus, Eye, CheckCircle, XCircle, 
+import {
+  Package, Truck, ClipboardList, RotateCcw, Search,
+  Filter, Download, Plus, Eye, CheckCircle, XCircle,
   Clock, Calendar, DollarSign, MoreVertical, AlertCircle,
   TrendingUp, ChevronDown, FileText, Send, Building2,
   MapPin, Phone, Mail, Scale, Ban,
   Printer
 } from 'lucide-react';
+import { NewMRFModal } from '../../components/procurement/NewMRFModal';
 
 export default function PurchaseManagement() {
   const [activeTab, setActiveTab] = useState<'mrf' | 'comparison' | 'po' | 'grn' | 'return'>('mrf');
   const [selectedPO, setSelectedPO] = useState<string | null>(null);
+  const [isNewMRFModalOpen, setIsNewMRFModalOpen] = useState(false);
 
   const materialRequisitions = [
     {
@@ -267,6 +269,12 @@ export default function PurchaseManagement() {
     return `₹${amount.toLocaleString('en-IN')}`;
   };
 
+
+  const handleMRFCreated = () => {
+    console.log('MRF created successfully!');
+    // Refresh MRF list or show toast
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -279,7 +287,9 @@ export default function PurchaseManagement() {
             <Download className="size-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button
+            onClick={() => setIsNewMRFModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             New MRF
           </button>
@@ -325,16 +335,15 @@ export default function PurchaseManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === tab
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
             >
-              {tab === 'mrf' ? 'Material Requisition' : 
-               tab === 'comparison' ? 'Supplier Comparison' : 
-               tab === 'po' ? 'Purchase Orders' : 
-               tab === 'grn' ? 'Goods Receipt (GRN)' : 'Purchase Return'}
+              {tab === 'mrf' ? 'Material Requisition' :
+                tab === 'comparison' ? 'Supplier Comparison' :
+                  tab === 'po' ? 'Purchase Orders' :
+                    tab === 'grn' ? 'Goods Receipt (GRN)' : 'Purchase Return'}
             </button>
           ))}
         </nav>
@@ -386,7 +395,7 @@ export default function PurchaseManagement() {
                       <span>•</span>
                       <span>Purpose: {mrf.purpose}</span>
                     </div>
-                    
+
                     <div className="bg-gray-50 rounded p-3">
                       <table className="w-full text-sm">
                         <thead>
@@ -461,7 +470,7 @@ export default function PurchaseManagement() {
                     <span className="text-xs text-gray-400">|</span>
                     <span className="text-sm text-gray-600">Qty: {comp.quantity} {comp.unit}</span>
                   </div>
-                  
+
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
@@ -494,7 +503,7 @@ export default function PurchaseManagement() {
                       </tbody>
                     </table>
                   </div>
-                  
+
                   <div className="mt-3 p-3 bg-green-50 rounded">
                     <p className="text-sm">
                       <span className="font-medium">Selected Vendor:</span> {comp.selectedVendor}
@@ -543,9 +552,8 @@ export default function PurchaseManagement() {
                         {new Date(po.expectedDelivery).toLocaleDateString('en-IN')}
                       </td>
                       <td className="py-3 px-4">
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          po.status === 'On Time' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                        }`}>
+                        <span className={`text-xs px-2 py-1 rounded ${po.status === 'On Time' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                          }`}>
                           {po.status}
                         </span>
                       </td>
@@ -578,7 +586,7 @@ export default function PurchaseManagement() {
                       <span>•</span>
                       <span>Delivery: {new Date(po.expectedDelivery).toLocaleDateString('en-IN')}</span>
                     </div>
-                    
+
                     <div className="bg-gray-50 rounded p-3 mb-2">
                       <table className="w-full text-sm">
                         <thead>
@@ -687,7 +695,7 @@ export default function PurchaseManagement() {
                     <span>•</span>
                     <span>Inspected by: {grn.inspectedBy}</span>
                   </div>
-                  
+
                   <div className="bg-gray-50 rounded p-3 mb-2">
                     <table className="w-full text-sm">
                       <thead>
@@ -760,7 +768,7 @@ export default function PurchaseManagement() {
                     <span>•</span>
                     <span>Reason: {ret.returnReason}</span>
                   </div>
-                  
+
                   <div className="bg-gray-50 rounded p-3 mb-2">
                     <table className="w-full text-sm">
                       <thead>
@@ -807,6 +815,12 @@ export default function PurchaseManagement() {
           ))}
         </div>
       )}
+
+      <NewMRFModal
+        open={isNewMRFModalOpen}
+        onOpenChange={setIsNewMRFModalOpen}
+        onSuccess={handleMRFCreated}
+      />
     </div>
   );
 }
