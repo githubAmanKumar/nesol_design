@@ -11,10 +11,12 @@ import {
   BarChart, Bar, LineChart as RechartsLineChart, Line, PieChart as RechartsPieChart, Pie,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell
 } from 'recharts';
+import { ScheduleReportModal } from '../components/reports/ScheduleReportModal';
 
 export default function Reports() {
   const [activeTab, setActiveTab] = useState<'production' | 'sales' | 'finance' | 'hr' | 'procurement' | 'inventory'>('production');
   const [dateRange, setDateRange] = useState('April 2026');
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
   // Production Summary Data
   const productionData = [
@@ -103,6 +105,11 @@ export default function Reports() {
     return num.toLocaleString('en-IN');
   };
 
+  const handleScheduleCreated = () => {
+    console.log('Report schedule created successfully!');
+    // Refresh scheduled reports list or show toast
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -111,7 +118,9 @@ export default function Reports() {
           <p className="text-sm text-gray-600">Generate management reports and insights</p>
         </div>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+          <button 
+          onClick={() => setIsScheduleModalOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
             <Mail className="size-4" />
             Schedule Report
           </button>
@@ -609,6 +618,12 @@ export default function Reports() {
           </div>
         </div>
       </div>
+
+      <ScheduleReportModal
+        open={isScheduleModalOpen}
+        onOpenChange={setIsScheduleModalOpen}
+        onSuccess={handleScheduleCreated}
+      />
     </div>
   );
 }

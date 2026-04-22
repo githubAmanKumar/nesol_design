@@ -7,10 +7,12 @@ import {
   MessageCircle, Send, FileText, Wrench, DollarSign,
   Timer, TrendingUp, ChevronDown, BadgeCheck
 } from 'lucide-react';
+import { NewTicketModal } from '../../components/support/NewTicketModal';
 
 export default function AfterSalesSupport() {
   const [activeTab, setActiveTab] = useState<'tickets' | 'sla' | 'reports'>('tickets');
   const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
+  const [isNewTicketModalOpen, setIsNewTicketModalOpen] = useState(false);
 
   const supportTickets = [
     {
@@ -212,6 +214,11 @@ export default function AfterSalesSupport() {
     return new Date(date).toLocaleDateString('en-IN');
   };
 
+  const handleTicketCreated = () => {
+    console.log('Support ticket created successfully!');
+    // Refresh ticket list or show toast
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -224,7 +231,9 @@ export default function AfterSalesSupport() {
             <Download className="size-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button 
+          onClick={() => setIsNewTicketModalOpen(true)}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             New Ticket
           </button>
@@ -638,6 +647,12 @@ export default function AfterSalesSupport() {
           })}
         </div>
       )}
+
+      <NewTicketModal
+        open={isNewTicketModalOpen}
+        onOpenChange={setIsNewTicketModalOpen}
+        onSuccess={handleTicketCreated}
+      />
     </div>
   );
 }

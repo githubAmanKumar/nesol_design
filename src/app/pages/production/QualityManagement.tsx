@@ -1,14 +1,16 @@
 // src/app/pages/production/QualityManagement.tsx
 import { useState } from 'react';
-import { 
+import {
   Shield, CheckCircle, XCircle, AlertTriangle, ClipboardCheck,
   Search, Filter, Download, Plus, Eye, MoreVertical,
   Calendar, Clock, Users, Package, TrendingUp, ChevronDown,
   BarChart3, Target, FileText, Wrench, RotateCcw
 } from 'lucide-react';
+import { NewQCCheckModal } from '../../components/production/NewQCCheckModal';
 
 export default function QualityManagement() {
   const [activeTab, setActiveTab] = useState<'inprocess' | 'finished' | 'defects' | 'report' | 'capa'>('inprocess');
+  const [isNewQCCheckModalOpen, setIsNewQCCheckModalOpen] = useState(false);
 
   const inProcessQC = [
     {
@@ -287,6 +289,11 @@ export default function QualityManagement() {
     'Closed': 'bg-green-100 text-green-700',
   };
 
+  const handleQCCheckRecorded = () => {
+    console.log('QC Check recorded successfully!');
+    // Refresh QC data or show toast
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -299,7 +306,9 @@ export default function QualityManagement() {
             <Download className="size-4" />
             Export Report
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button 
+          onClick={() => setIsNewQCCheckModalOpen(true)}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             New QC Check
           </button>
@@ -345,16 +354,15 @@ export default function QualityManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === tab
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
             >
-              {tab === 'inprocess' ? 'In-Process QC' : 
-               tab === 'finished' ? 'Finished Goods QC' : 
-               tab === 'defects' ? 'Defect/Rejection Log' : 
-               tab === 'report' ? 'Quality Reports' : 'Customer CAPA'}
+              {tab === 'inprocess' ? 'In-Process QC' :
+                tab === 'finished' ? 'Finished Goods QC' :
+                  tab === 'defects' ? 'Defect/Rejection Log' :
+                    tab === 'report' ? 'Quality Reports' : 'Customer CAPA'}
             </button>
           ))}
         </nav>
@@ -588,11 +596,10 @@ export default function QualityManagement() {
               {qualityReports.slice(0, 5).reverse().map((report) => (
                 <div key={report.batchNumber} className="flex flex-col items-center gap-2 flex-1">
                   <div className="relative w-full flex justify-center">
-                    <div 
-                      className={`w-12 rounded-t ${
-                        report.passRate >= 98 ? 'bg-green-500' : 
+                    <div
+                      className={`w-12 rounded-t ${report.passRate >= 98 ? 'bg-green-500' :
                         report.passRate >= 95 ? 'bg-blue-500' : 'bg-orange-500'
-                      }`}
+                        }`}
                       style={{ height: `${report.passRate * 1.5}px` }}
                     />
                   </div>
@@ -627,10 +634,9 @@ export default function QualityManagement() {
                       <td className="py-3 px-4 text-right text-sm text-green-600">{report.totalPassed}</td>
                       <td className="py-3 px-4 text-right text-sm text-red-600">{report.totalRejected}</td>
                       <td className="py-3 px-4 text-right">
-                        <span className={`text-sm font-medium ${
-                          report.passRate >= 98 ? 'text-green-600' : 
+                        <span className={`text-sm font-medium ${report.passRate >= 98 ? 'text-green-600' :
                           report.passRate >= 95 ? 'text-blue-600' : 'text-orange-600'
-                        }`}>
+                          }`}>
                           {report.passRate}%
                         </span>
                       </td>
@@ -666,12 +672,10 @@ export default function QualityManagement() {
           {capaRecords.map((capa) => (
             <div key={capa.id} className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="flex items-start gap-4">
-                <div className={`p-2 rounded ${
-                  capa.closureStatus === 'Open' ? 'bg-yellow-50' : 'bg-green-50'
-                }`}>
-                  <Shield className={`size-5 ${
-                    capa.closureStatus === 'Open' ? 'text-yellow-500' : 'text-green-500'
-                  }`} />
+                <div className={`p-2 rounded ${capa.closureStatus === 'Open' ? 'bg-yellow-50' : 'bg-green-50'
+                  }`}>
+                  <Shield className={`size-5 ${capa.closureStatus === 'Open' ? 'text-yellow-500' : 'text-green-500'
+                    }`} />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
@@ -684,7 +688,7 @@ export default function QualityManagement() {
                       {capa.closureStatus}
                     </span>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4 mb-3">
                     <div>
                       <p className="text-xs text-gray-500">Battery Serial / Batch</p>
@@ -738,6 +742,12 @@ export default function QualityManagement() {
           ))}
         </div>
       )}
+
+      <NewQCCheckModal
+        open={isNewQCCheckModalOpen}
+        onOpenChange={setIsNewQCCheckModalOpen}
+        onSuccess={handleQCCheckRecorded}
+      />
     </div>
   );
 }

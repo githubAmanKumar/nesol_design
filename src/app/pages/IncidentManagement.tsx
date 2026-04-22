@@ -1,13 +1,15 @@
 // src/app/pages/IncidentManagement.tsx
 import { useState } from 'react';
-import { 
-  AlertTriangle, Shield, Wrench, Users, Truck, 
+import {
+  AlertTriangle, Shield, Wrench, Users, Truck,
   Search, Filter, Plus, Eye, Clock, CheckCircle,
   XCircle, Calendar, MoreVertical, TrendingUp
 } from 'lucide-react';
+import { ReportIncidentModal } from '../components/incident/ReportIncidentModal';
 
 export default function IncidentManagement() {
   const [activeTab, setActiveTab] = useState<'all' | 'investigation' | 'trends'>('all');
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   const incidents = [
     {
@@ -142,6 +144,11 @@ export default function IncidentManagement() {
     'Closed': 'bg-gray-100 text-gray-700',
   };
 
+  const handleIncidentReported = () => {
+    console.log('Incident reported successfully!');
+    // Refresh incident list or show toast
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -149,7 +156,9 @@ export default function IncidentManagement() {
           <h1 className="font-bold text-gray-900">Incident Management</h1>
           <p className="text-sm text-gray-600">Report and track safety, quality, and operational incidents</p>
         </div>
-        <button className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+        <button
+          onClick={() => setIsReportModalOpen(true)}
+          className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
           <AlertTriangle className="size-4" />
           Report Incident
         </button>
@@ -195,11 +204,10 @@ export default function IncidentManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === tab
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
             >
               {tab === 'all' ? 'All Incidents' : tab === 'investigation' ? 'Investigations' : 'Trend Analysis'}
             </button>
@@ -247,16 +255,14 @@ export default function IncidentManagement() {
               <div key={incident.id} className="bg-white rounded-lg border border-gray-200 p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
-                    <div className={`p-2 rounded ${
-                      incident.severity === 'Critical' ? 'bg-red-50' :
+                    <div className={`p-2 rounded ${incident.severity === 'Critical' ? 'bg-red-50' :
                       incident.severity === 'High' ? 'bg-orange-50' :
-                      incident.severity === 'Medium' ? 'bg-yellow-50' : 'bg-blue-50'
-                    }`}>
-                      <TypeIcon className={`size-5 ${
-                        incident.severity === 'Critical' ? 'text-red-500' :
+                        incident.severity === 'Medium' ? 'bg-yellow-50' : 'bg-blue-50'
+                      }`}>
+                      <TypeIcon className={`size-5 ${incident.severity === 'Critical' ? 'text-red-500' :
                         incident.severity === 'High' ? 'text-orange-500' :
-                        incident.severity === 'Medium' ? 'text-yellow-500' : 'text-blue-500'
-                      }`} />
+                          incident.severity === 'Medium' ? 'text-yellow-500' : 'text-blue-500'
+                        }`} />
                     </div>
                     <div>
                       <div className="flex items-center gap-3 mb-1">
@@ -327,9 +333,8 @@ export default function IncidentManagement() {
                           </span>
                         )}
                       </div>
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        inv.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                      }`}>
+                      <span className={`text-xs px-2 py-1 rounded ${inv.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                        }`}>
                         {inv.status}
                       </span>
                     </div>
@@ -370,7 +375,7 @@ export default function IncidentManagement() {
             <TrendingUp className="size-5 text-blue-500" />
             <h3 className="font-semibold text-gray-900">Incident Trends - Last 6 Months</h3>
           </div>
-          
+
           {/* Trend Summary */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
@@ -474,7 +479,7 @@ export default function IncidentManagement() {
                 const values = [4, 3, 5, 6, 4, 3];
                 return (
                   <div key={month} className="flex flex-col items-center gap-1">
-                    <div 
+                    <div
                       className="w-12 bg-blue-500 rounded-t"
                       style={{ height: `${values[idx] * 20}px` }}
                     />
@@ -487,6 +492,13 @@ export default function IncidentManagement() {
           </div>
         </div>
       )}
+
+
+      <ReportIncidentModal
+        open={isReportModalOpen}
+        onOpenChange={setIsReportModalOpen}
+        onSuccess={handleIncidentReported}
+      />
     </div>
   );
 }

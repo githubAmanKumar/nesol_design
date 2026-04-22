@@ -1,4 +1,4 @@
-// src/app/pages/Assets.tsx
+// src/app/pages/AssetsManagement.tsx
 import { useState } from 'react';
 import { 
   Building2, Laptop, Truck, Wrench, Monitor, 
@@ -7,9 +7,11 @@ import {
   DollarSign,
   TrendingDown
 } from 'lucide-react';
+import { AddAssetModal } from '../components/assets/AddAssetModal';
 
 export default function AssetsManagement() {
   const [activeTab, setActiveTab] = useState<'all' | 'amc' | 'movement'>('all');
+  const [isAddAssetModalOpen, setIsAddAssetModalOpen] = useState(false);
 
   const assets = [
     {
@@ -212,6 +214,11 @@ export default function AssetsManagement() {
     'Electrical Equipment': Laptop,
   };
 
+  const handleAssetAdded = () => {
+    console.log('Asset added successfully!');
+    // Refresh asset list or show toast
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -228,7 +235,9 @@ export default function AssetsManagement() {
             <Download className="size-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button 
+          onClick={() => setIsAddAssetModalOpen(true)}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             Add Asset
           </button>
@@ -448,6 +457,12 @@ export default function AssetsManagement() {
           ))}
         </div>
       )}
+
+      <AddAssetModal
+        open={isAddAssetModalOpen}
+        onOpenChange={setIsAddAssetModalOpen}
+        onSuccess={handleAssetAdded}
+      />
     </div>
   );
 }

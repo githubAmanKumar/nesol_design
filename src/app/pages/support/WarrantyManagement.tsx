@@ -1,15 +1,17 @@
 // src/app/pages/support/WarrantyManagement.tsx
 import { useState } from 'react';
-import { 
+import {
   Shield, RotateCcw, Search, Filter, Download, Plus, Eye,
   MoreVertical, Calendar, Package, Truck, CheckCircle, XCircle,
   Clock, AlertCircle, FileText, Wrench, DollarSign, User,
   ChevronDown, ClipboardCheck, ArrowRightLeft, QrCode
 } from 'lucide-react';
+import { NewRMAModal } from '../../components/support/WarrantyManagement';
 
 export default function WarrantyManagement() {
   const [activeTab, setActiveTab] = useState<'rma' | 'inspection' | 'repair' | 'claim' | 'dispatch'>('rma');
   const [selectedRMA, setSelectedRMA] = useState<string | null>(null);
+  const [isNewRMAModalOpen, setIsNewRMAModalOpen] = useState(false);
 
   const rmaRecords = [
     {
@@ -285,6 +287,11 @@ export default function WarrantyManagement() {
     return `₹${amount.toLocaleString('en-IN')}`;
   };
 
+  const handleRMACreated = () => {
+    console.log('RMA created successfully!');
+    // Refresh RMA list or show toast
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -297,7 +304,9 @@ export default function WarrantyManagement() {
             <Download className="size-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button
+            onClick={() => setIsNewRMAModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             New RMA
           </button>
@@ -350,16 +359,15 @@ export default function WarrantyManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === tab
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab
                   ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+                }`}
             >
-              {tab === 'rma' ? 'RMA Workflow' : 
-               tab === 'inspection' ? 'Inspection' : 
-               tab === 'repair' ? 'Repair Job Card' : 
-               tab === 'claim' ? 'Warranty Claims' : 'Dispatch Tracking'}
+              {tab === 'rma' ? 'RMA Workflow' :
+                tab === 'inspection' ? 'Inspection' :
+                  tab === 'repair' ? 'Repair Job Card' :
+                    tab === 'claim' ? 'Warranty Claims' : 'Dispatch Tracking'}
             </button>
           ))}
         </nav>
@@ -412,7 +420,7 @@ export default function WarrantyManagement() {
                       <span className="text-xs text-gray-400">|</span>
                       <span className="text-sm text-gray-600">Ticket: {rma.ticketId}</span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-3 mt-2">
                       <div>
                         <p className="text-xs text-gray-500">Customer</p>
@@ -495,7 +503,7 @@ export default function WarrantyManagement() {
                         {inspection.verdict}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 mb-3">
                       <div>
                         <p className="text-xs text-gray-500">Visual Inspection Findings</p>
@@ -550,13 +558,12 @@ export default function WarrantyManagement() {
                       <span className="text-sm text-gray-600">RMA: {job.rmaId}</span>
                       <span className="text-xs text-gray-400">|</span>
                       <span className="text-sm font-mono text-gray-600">S/N: {job.batterySerial}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded ${
-                        job.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                      }`}>
+                      <span className={`text-xs px-2 py-0.5 rounded ${job.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                        }`}>
                         {job.status}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 mb-3">
                       <div>
                         <p className="text-xs text-gray-500">Technician</p>
@@ -655,7 +662,7 @@ export default function WarrantyManagement() {
                         )
                       )}
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 mb-3">
                       <div>
                         <p className="text-xs text-gray-500">Claim Type</p>
@@ -721,13 +728,12 @@ export default function WarrantyManagement() {
                       <h3 className="font-medium text-gray-900">RMA: {dispatch.rmaId}</h3>
                       <span className="text-xs text-gray-400">|</span>
                       <span className="text-sm text-gray-600">{rma?.customerName}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded ${
-                        dispatch.status === 'Delivered' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                      }`}>
+                      <span className={`text-xs px-2 py-0.5 rounded ${dispatch.status === 'Delivered' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                        }`}>
                         {dispatch.status}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 mb-3">
                       <div>
                         <p className="text-xs text-gray-500">DC Number</p>
@@ -771,6 +777,12 @@ export default function WarrantyManagement() {
           })}
         </div>
       )}
+
+      <NewRMAModal
+        open={isNewRMAModalOpen}
+        onOpenChange={setIsNewRMAModalOpen}
+        onSuccess={handleRMACreated}
+      />
     </div>
   );
 }

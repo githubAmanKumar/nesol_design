@@ -1,15 +1,16 @@
 // src/app/pages/logistics/LogisticsManagement.tsx
 import { useState } from 'react';
-import { 
+import {
   Truck, Package, MapPin, Phone, Mail, FileText, CheckCircle,
   XCircle, Clock, AlertCircle, Search, Filter, Download,
   Plus, Eye, MoreVertical, Calendar, DollarSign, CreditCard,
   ChevronDown, Upload, Printer, Building2, User, Hash
 } from 'lucide-react';
+import { AddTransporterModal } from '../../components/logistics/AddTransporterModal';
 
 export default function LogisticsManagement() {
   const [activeTab, setActiveTab] = useState<'transporter' | 'freight' | 'dispatch' | 'delivery' | 'cost'>('transporter');
-
+  const [isAddTransporterModalOpen, setIsAddTransporterModalOpen] = useState(false);
   const transporters = [
     {
       id: 'TRANS/001',
@@ -287,6 +288,11 @@ export default function LogisticsManagement() {
     return new Date(date).toLocaleDateString('en-IN');
   };
 
+  const handleTransporterAdded = () => {
+    console.log('Transporter added successfully!');
+    // Refresh transporter list or show toast
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -299,7 +305,9 @@ export default function LogisticsManagement() {
             <Download className="size-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button 
+          onClick={() => setIsAddTransporterModalOpen(true)}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             Add Transporter
           </button>
@@ -345,16 +353,15 @@ export default function LogisticsManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === tab
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab
                   ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+                }`}
             >
-              {tab === 'transporter' ? 'Transporter Master' : 
-               tab === 'freight' ? 'Freight Management' : 
-               tab === 'dispatch' ? 'Dispatch Schedule' : 
-               tab === 'delivery' ? 'Delivery Confirmation' : 'Freight Cost'}
+              {tab === 'transporter' ? 'Transporter Master' :
+                tab === 'freight' ? 'Freight Management' :
+                  tab === 'dispatch' ? 'Dispatch Schedule' :
+                    tab === 'delivery' ? 'Delivery Confirmation' : 'Freight Cost'}
             </button>
           ))}
         </nav>
@@ -402,7 +409,7 @@ export default function LogisticsManagement() {
                         <span className="text-xs text-gray-600 ml-1">{transporter.rating}</span>
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 mt-3">
                       <div>
                         <p className="text-xs text-gray-500 mb-1">Contact Information</p>
@@ -543,7 +550,7 @@ export default function LogisticsManagement() {
                         {dispatch.status}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 mb-3">
                       <div>
                         <p className="text-xs text-gray-500">Transporter</p>
@@ -614,14 +621,12 @@ export default function LogisticsManagement() {
           {deliveryConfirmations.map((delivery) => (
             <div key={delivery.shipmentId} className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="flex items-start gap-4">
-                <div className={`p-2 rounded ${
-                  delivery.deliveryStatus === 'Delivered' ? 'bg-green-50' :
-                  delivery.deliveryStatus === 'Damaged' ? 'bg-red-50' : 'bg-orange-50'
-                }`}>
-                  <Package className={`size-5 ${
-                    delivery.deliveryStatus === 'Delivered' ? 'text-green-500' :
-                    delivery.deliveryStatus === 'Damaged' ? 'text-red-500' : 'text-orange-500'
-                  }`} />
+                <div className={`p-2 rounded ${delivery.deliveryStatus === 'Delivered' ? 'bg-green-50' :
+                    delivery.deliveryStatus === 'Damaged' ? 'bg-red-50' : 'bg-orange-50'
+                  }`}>
+                  <Package className={`size-5 ${delivery.deliveryStatus === 'Delivered' ? 'text-green-500' :
+                      delivery.deliveryStatus === 'Damaged' ? 'text-red-500' : 'text-orange-500'
+                    }`} />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
@@ -630,7 +635,7 @@ export default function LogisticsManagement() {
                       {delivery.deliveryStatus}
                     </span>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4 mb-3">
                     <div>
                       <p className="text-xs text-gray-500">Delivery Date & Time</p>
@@ -742,6 +747,12 @@ export default function LogisticsManagement() {
           </div>
         </div>
       )}
+
+      <AddTransporterModal
+        open={isAddTransporterModalOpen}
+        onOpenChange={setIsAddTransporterModalOpen}
+        onSuccess={handleTransporterAdded}
+      />
     </div>
   );
 }
