@@ -1,7 +1,12 @@
 // src/app/pages/production/InventoryManagement.jsx
 import { Package, TrendingDown, TrendingUp, AlertTriangle } from 'lucide-react';
+import { useState } from 'react';
+import { StockAdjustmentModal } from '../../components/production/StockAdjustmentModal';
 
 export default function InventoryManagement() {
+
+  const [isStockAdjustmentModalOpen, setIsStockAdjustmentModalOpen] = useState(false);
+
   const inventoryStats = {
     rawMaterial: 245,
     finishedGoods: 12450,
@@ -23,6 +28,11 @@ export default function InventoryManagement() {
     { sku: 'NES-200AH', name: 'Solar Battery 200AH', stock: 850, reserved: 150, available: 700, value: 3400000, category: 'Solar' },
   ];
 
+  const handleStockAdjusted = () => {
+    console.log('Stock adjustment completed successfully!');
+    // Refresh inventory data or show toast
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -31,7 +41,9 @@ export default function InventoryManagement() {
           <h1 className="font-bold text-gray-900">Inventory Management</h1>
           <p className="text-sm text-gray-600">Track raw materials and finished goods inventory</p>
         </div>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        <button
+          onClick={() => setIsStockAdjustmentModalOpen(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
           Stock Adjustment
         </button>
       </div>
@@ -101,9 +113,8 @@ export default function InventoryManagement() {
                   <td className="py-3 px-4 text-sm text-right text-gray-600">{material.minStock.toLocaleString()}</td>
                   <td className="py-3 px-4 text-sm text-right text-gray-600">{material.value.toLocaleString()}</td>
                   <td className="py-3 px-4">
-                    <span className={`text-xs px-2 py-1 rounded ${
-                      material.status === 'Low Stock' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'
-                    }`}>
+                    <span className={`text-xs px-2 py-1 rounded ${material.status === 'Low Stock' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'
+                      }`}>
                       {material.status}
                     </span>
                   </td>
@@ -149,6 +160,12 @@ export default function InventoryManagement() {
           </table>
         </div>
       </div>
+
+      <StockAdjustmentModal
+        open={isStockAdjustmentModalOpen}
+        onOpenChange={setIsStockAdjustmentModalOpen}
+        onSuccess={handleStockAdjusted}
+      />
     </div>
   );
 }

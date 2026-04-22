@@ -1,16 +1,18 @@
 // src/app/pages/production/ProductionManagement.tsx
 import { useState } from 'react';
-import { 
-  Factory, Package, Timer, CheckCircle, XCircle, 
+import {
+  Factory, Package, Timer, CheckCircle, XCircle,
   AlertCircle, Search, Filter, Download, Plus, Eye,
   MoreVertical, Play, Pause, Calendar, Clock, Users,
   Wrench, TrendingUp, ChevronDown, BarChart3, ClipboardList,
   Target
 } from 'lucide-react';
+import { NewProductionOrderModal } from '../../components/production/NewProductionOrderModal';
 
 export default function ProductionManagement() {
   const [activeTab, setActiveTab] = useState<'orders' | 'bom' | 'wip' | 'dashboard'>('orders');
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
+  const [isNewOrderModalOpen, setIsNewOrderModalOpen] = useState(false);
 
   const billOfMaterials = [
     {
@@ -241,6 +243,11 @@ export default function ProductionManagement() {
     'Low': 'bg-green-100 text-green-700',
   };
 
+  const handleOrderCreated = () => {
+    console.log('Production order created successfully!');
+    // Refresh order list or show toast
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -253,7 +260,9 @@ export default function ProductionManagement() {
             <Download className="size-4" />
             Export
           </button>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+          <button
+            onClick={() => setIsNewOrderModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             <Plus className="size-4" />
             New Production Order
           </button>
@@ -300,15 +309,14 @@ export default function ProductionManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === tab
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
             >
-              {tab === 'orders' ? 'Production Orders' : 
-               tab === 'bom' ? 'Bill of Materials' : 
-               tab === 'wip' ? 'WIP Tracking' : 'Daily Dashboard'}
+              {tab === 'orders' ? 'Production Orders' :
+                tab === 'bom' ? 'Bill of Materials' :
+                  tab === 'wip' ? 'WIP Tracking' : 'Daily Dashboard'}
             </button>
           ))}
         </nav>
@@ -368,7 +376,7 @@ export default function ProductionManagement() {
                         </>
                       )}
                     </div>
-                    
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                       <div>
                         <p className="text-xs text-gray-500">Quantity</p>
@@ -379,8 +387,8 @@ export default function ProductionManagement() {
                           )}
                         </p>
                         <div className="mt-1 bg-gray-200 rounded-full h-1.5 w-32">
-                          <div 
-                            className="bg-blue-500 h-1.5 rounded-full" 
+                          <div
+                            className="bg-blue-500 h-1.5 rounded-full"
                             style={{ width: `${(order.produced / order.quantity) * 100}%` }}
                           />
                         </div>
@@ -448,7 +456,7 @@ export default function ProductionManagement() {
                         v{bom.version}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
                       {bom.components.map((comp, idx) => (
                         <div key={idx} className="bg-gray-50 rounded p-2">
@@ -487,17 +495,16 @@ export default function ProductionManagement() {
               <h3 className="font-semibold text-gray-900">WIP Tracking - PO/2026/156 (Automotive Battery 150AH)</h3>
               <span className="text-sm text-gray-600">Current Stage: Curing</span>
             </div>
-            
+
             <div className="relative">
               {/* Timeline */}
               <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-200" />
-              
+
               {wipStages.map((stage, idx) => (
                 <div key={stage.id} className="relative flex items-start gap-6 pb-6 last:pb-0">
-                  <div className={`relative z-10 size-8 rounded-full flex items-center justify-center ${
-                    stage.status === 'Completed' ? 'bg-green-500' :
+                  <div className={`relative z-10 size-8 rounded-full flex items-center justify-center ${stage.status === 'Completed' ? 'bg-green-500' :
                     stage.status === 'In Progress' ? 'bg-blue-500' : 'bg-gray-300'
-                  }`}>
+                    }`}>
                     {stage.status === 'Completed' ? (
                       <CheckCircle className="size-5 text-white" />
                     ) : stage.status === 'In Progress' ? (
@@ -506,7 +513,7 @@ export default function ProductionManagement() {
                       <span className="text-white text-sm">{idx + 1}</span>
                     )}
                   </div>
-                  
+
                   <div className="flex-1 bg-gray-50 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium text-gray-900">{stage.name}</h4>
@@ -514,7 +521,7 @@ export default function ProductionManagement() {
                         {stage.status}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                       <div>
                         <p className="text-xs text-gray-500">Machine</p>
@@ -631,9 +638,8 @@ export default function ProductionManagement() {
                       <td className="py-3 px-4 text-right text-sm text-gray-900">{batch.quantity}</td>
                       <td className="py-3 px-4 text-sm text-gray-600">{batch.rawMaterialLots.join(', ')}</td>
                       <td className="py-3 px-4">
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          batch.qcResult === 'Passed' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                        }`}>
+                        <span className={`text-xs px-2 py-1 rounded ${batch.qcResult === 'Passed' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                          }`}>
                           {batch.qcResult}
                         </span>
                       </td>
@@ -676,10 +682,9 @@ export default function ProductionManagement() {
                       <td className="py-3 px-4 text-right text-sm font-medium text-gray-900">{day.actual}</td>
                       <td className="py-3 px-4 text-right text-sm text-red-600">{day.rejected}</td>
                       <td className="py-3 px-4 text-right">
-                        <span className={`text-sm font-medium ${
-                          day.efficiency >= 100 ? 'text-green-600' : 
+                        <span className={`text-sm font-medium ${day.efficiency >= 100 ? 'text-green-600' :
                           day.efficiency >= 95 ? 'text-blue-600' : 'text-orange-600'
-                        }`}>
+                          }`}>
                           {day.efficiency}%
                         </span>
                       </td>
@@ -706,11 +711,10 @@ export default function ProductionManagement() {
               {dailyDashboard.map((day) => (
                 <div key={day.date} className="flex flex-col items-center gap-2 flex-1">
                   <div className="relative w-full flex justify-center">
-                    <div 
-                      className={`w-12 rounded-t ${
-                        day.efficiency >= 100 ? 'bg-green-500' : 
+                    <div
+                      className={`w-12 rounded-t ${day.efficiency >= 100 ? 'bg-green-500' :
                         day.efficiency >= 95 ? 'bg-blue-500' : 'bg-orange-500'
-                      }`}
+                        }`}
                       style={{ height: `${day.efficiency * 1.5}px` }}
                     />
                   </div>
@@ -724,6 +728,13 @@ export default function ProductionManagement() {
           </div>
         </div>
       )}
+
+
+      <NewProductionOrderModal
+        open={isNewOrderModalOpen}
+        onOpenChange={setIsNewOrderModalOpen}
+        onSuccess={handleOrderCreated}
+      />
     </div>
   );
 }
